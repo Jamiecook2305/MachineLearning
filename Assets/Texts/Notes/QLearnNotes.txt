@@ -1,0 +1,83 @@
+From: https://towardsdatascience.com/introduction-to-various-reinforcement-learning-algorithms-i-q-learning-sarsa-dqn-ddpg-72a5e0cb6287
+
+Definitions:
+Action (A, a): All the possible moves that the agent can make
+State (S, s): Current situation returned by the environment
+Reward (R, r): An immediate return send back from the environment to evaluate the last action
+Policy (Pi): The strategy that the agent employs to determine next action based on the current state
+Value (V, v): the expected long-term return with discount, as opposed to the short-term reward R. Vpi(s) is defined as the expected long-term return of the current state separate from policy pi.
+Q-Value/Action-Value (Q, q): Q-Value is similar to value, except that it takes an extra parameter, the current action a. Qpi(s, a) refers to the long-term return of the current state s, taking action a under policy pi.
+
+Maths Symbols:
+P(x): the probability of x
+P(A | B): the probability of A given B happened
+Sum
+
+Initialisation:
+V(s) *funky maths E* *funky maths R* and pi(s) E A(s) arbitrarily for all s E S
+that means:
+The value of the current state *which is a real number* and the Policy of the current state which is an Action to be taken in the state arbitratily for all possible states
+
+Policy Evaluation:
+Repeat
+	Delta < 0
+	For each s E S:
+		v < V(s)
+		V(s) < Sum s, r P(s', r | s, pi(s))[r + yV(s')]
+		Delta < max(Delta, | v - V(s)|)
+until Delta < Theta (a small positive number)
+
+Policy Improvement:
+policy-stable < true
+For each s E S:
+	a < pi(s)
+	pi(s) < argmax a Sum s' r P(s', r | s, a) [r + yV(s')]
+	if a /= pi(s), then policy stable < false
+if policy-stable, then stop and return V and pi; else go to Policy Evaluation
+
+Bellman Eqn:
+V(s) = max a(R(s, a) + yV(s'))
+
+0 - Initialise Q
+1 - Choose action from Q
+2 - Perform action
+3 - Measure reward
+4 - Update Q
+5 - Back to 1
+
+(in more detail)
+1 - initialise Q-Values [Q(s, a)] arbitrarily for all state-action pairs
+2 - For life or until learning is stopped...
+3 -		Choose an action (a) in the current world state (s) based on current Q-Value estimates [Q(s, .)]
+4 -		Take the action (a) and observe the outcome state (s') and reward (r).
+5 -		Update Q(s, a) := Q(s, a) + *alpha*[r + *gamma*max a'Q(s', a') - Q(s, a)]
+
+Lr = Learning Rate
+Dr = Discount Rate
+
+NewQ(s, a) = Q(s, a) + Lr[R(s, a) + DrMaxQ'(s', a') - Q(s, a)]
+New Q value for that state and that action = Current Q value + the Learning Rate * [Reward for taking that action at that state + Discount rate * the Maximum expected reward given the new state and all possible actions at that new state - Current Q value]
+
+State definitions:
+	Knight and the princess
+		The state for the knight and the princess problem is where the knight is on the grid and what is in the surrounding squares
+	
+	Unmasked
+		The state for Unmasked is if the distance to the target decreased from the last state, the distance from the player, value of distance decrease
+
+Neural Network calculations
+	forward pass:
+		for each hidden layer you sum over the respective weights timesed by the inputs
+		e.g. w1 * x1 + w2 * x2 + w3 * x3
+		apply the sigmoid function to the inputs to get the outputs of the node
+
+		________________________
+	   |						|
+	   |	GRADIENT DESCENT	|
+	   |________________________|
+
+Step 1 - Initiallise x = 3 then find the gradient of the function.
+Step 2 - Move in the direction of the negative of the gradient *if gradient is 1 move left (-1), if gradient is -1 move right (1)* multiplied by the learning rate
+Step 3 - perform iterations of gradient descent
+	x1 = x0 - (learning rate) * (dy/dx)
+Step 4 - Observe that the x value slowly converges towards the minima but how many iterations should we perform? create a precision variable in the algorithm to calculate the difference between two consecutive x values. if the difference between them is smaller that the precision var then stop
